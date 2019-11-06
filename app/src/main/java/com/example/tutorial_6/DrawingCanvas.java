@@ -41,7 +41,7 @@ public class DrawingCanvas extends View {
     @Override
     protected void onDraw(Canvas canvas){
         if(pathsContainer.size() > 0){
-            for(int i = 0; i < pathsContainer.size(); i++){
+            for(int i = pathsContainer.size()-1; i >= 0; i--){
                 canvas.drawPath(pathsContainer.get(i), paintContainer.get(i));
                 super.onDraw(canvas);
             }
@@ -51,35 +51,75 @@ public class DrawingCanvas extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event){
 
-        switch (event.getAction()){
-            case MotionEvent.ACTION_DOWN:
+        int touchCount = event.getPointerCount();
 
-                mPaint.setColor(pathColour);
-                mPaint.setStyle(Paint.Style.STROKE);
-                mPaint.setStrokeJoin(Paint.Join.ROUND);
-                mPaint.setStrokeCap(Paint.Cap.ROUND);
-                mPaint.setStrokeWidth(10);
+        if(touchCount == 1) {
 
-                pathsContainer.addFirst(mPath);
-                paintContainer.addFirst(mPaint);
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
 
-                pathsContainer.getFirst().moveTo(event.getX(), event.getY());
-                break;
+                    mPaint.setColor(pathColour);
+                    mPaint.setStyle(Paint.Style.STROKE);
+                    mPaint.setStrokeJoin(Paint.Join.ROUND);
+                    mPaint.setStrokeCap(Paint.Cap.ROUND);
+                    mPaint.setStrokeWidth(10);
 
-            case MotionEvent.ACTION_MOVE:
-                pathsContainer.getFirst().lineTo(event.getX(), event.getY());
-                invalidate();
-                break;
+                    pathsContainer.addFirst(mPath);
+                    paintContainer.addFirst(mPaint);
 
-            case MotionEvent.ACTION_UP:
-                mPaint = new Paint();
-                mPath = new Path();
+                    pathsContainer.getFirst().moveTo(event.getX(), event.getY());
+                    break;
 
-                if(pathColour == Color.BLUE)
-                    pathColour = Color.RED;
-                else pathColour = Color.BLUE;
+                case MotionEvent.ACTION_MOVE:
+                    pathsContainer.getFirst().lineTo(event.getX(), event.getY());
+                    invalidate();
+                    break;
 
-                break;
+                case MotionEvent.ACTION_UP:
+                    mPaint = new Paint();
+                    mPath = new Path();
+
+                    if (pathColour == Color.BLUE)
+                        pathColour = Color.RED;
+                    else pathColour = Color.BLUE;
+
+                    break;
+            }
+        }else if(touchCount == 2){
+
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+
+                    mPaint.setColor(pathColour);
+                    mPaint.setStyle(Paint.Style.STROKE);
+                    mPaint.setStrokeJoin(Paint.Join.ROUND);
+                    mPaint.setStrokeCap(Paint.Cap.ROUND);
+                    mPaint.setStrokeWidth(10);
+
+                    pathsContainer.addFirst(mPath);
+                    paintContainer.addFirst(mPaint);
+
+                    pathsContainer.getFirst().moveTo(event.getX(0), event.getY(0));
+                    pathsContainer.getFirst().lineTo(event.getX(1), event.getY(1));
+                    break;
+
+                case MotionEvent.ACTION_MOVE:
+                    pathsContainer.getFirst().reset();
+                    pathsContainer.getFirst().moveTo(event.getX(0), event.getY(0));
+                    pathsContainer.getFirst().lineTo(event.getX(1), event.getY(1));
+                    invalidate();
+                    break;
+
+                case MotionEvent.ACTION_UP:
+                    mPaint = new Paint();
+                    mPath = new Path();
+
+                    if (pathColour == Color.BLUE)
+                        pathColour = Color.RED;
+                    else pathColour = Color.BLUE;
+
+                    break;
+            }
         }
 
         return true;
